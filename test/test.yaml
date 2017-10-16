@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+
+  graphite:
+    image: hopsoft/graphite-statsd
+    ports:
+      - "8081:80"
+
+  icinga:
+    image: jordan/icinga2:latest
+    environment:
+      ICINGA2_FEATURE_GRAPHITE: "true"
+      ICINGA2_FEATURE_GRAPHITE_HOST: "graphite"
+      ICINGA2_FEATURE_GRAPHITE_PORT: "2003"
+    links:
+      - "graphite:graphite"
+    ports:
+      - "8080:80"
