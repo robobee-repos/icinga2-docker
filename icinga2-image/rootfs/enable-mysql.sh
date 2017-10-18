@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [[ "$DEBUG" == "true" ]]; then
+  set -x
+fi
+
 function mysql_conf() {
   cat << EOF > /etc/icinga2/features-available/ido-mysql.conf
 library "db_ido_mysql"

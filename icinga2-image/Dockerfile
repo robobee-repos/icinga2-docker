@@ -40,9 +40,12 @@ RUN set -x \
 ADD rootfs/docker-entrypoint.sh /docker-entrypoint.sh
 ADD rootfs/run-icinga2.sh /run-icinga2.sh
 ADD rootfs/enable-mysql.sh /enable-mysql.sh
+ADD rootfs/enable-graphite.sh /enable-graphite.sh
 ADD rootfs/setup-mysql-tables.sh /setup-mysql-tables.sh
 
-ENV ICINGA2_FEATURE_GRAPHITE=false \
+ENV DEBUG="false" \
+  #
+  ICINGA2_FEATURE_GRAPHITE=true \
   ICINGA2_FEATURE_GRAPHITE_HOST=graphite \
   ICINGA2_FEATURE_GRAPHITE_PORT=2003 \
   ICINGA2_FEATURE_GRAPHITE_URL=http://graphite \
@@ -50,26 +53,26 @@ ENV ICINGA2_FEATURE_GRAPHITE=false \
   ICINGA2_FEATURE_DIRECTOR="true" \
   ICINGA2_FEATURE_DIRECTOR_KICKSTART="true" \
   ICINGA2_FEATURE_DIRECTOR_USER="icinga2-director" \
-  DEBUG="false"
-
-ENV ICINGA2_FEATURE_API="true" \
-    ICINGA2_FEATURE_API_USER="web2" \
-    ICINGA2_FEATURE_API_PASSWORD="web2" \
-    ICINGA2_FEATURE_API_PERMISSIONS="[ \"actions/*\", \"objects/modify/hosts\", \"objects/modify/services\", \"objects/modify/icingaapplication\" ]"
-
-ENV ICINGA2_FEATURE_MYSQL="true" \
-    ICINGA2_FEATURE_MYSQL_HOST="mysql" \
-    ICINGA2_FEATURE_MYSQL_PORT="3306" \
-    ICINGA2_FEATURE_MYSQL_USER="icinga" \
-    ICINGA2_FEATURE_MYSQL_PASSWORD="icinga" \
-    ICINGA2_FEATURE_MYSQL_DATABASE="icinga"
+  #
+  ICINGA2_FEATURE_MYSQL="true" \
+  ICINGA2_FEATURE_MYSQL_HOST="mysql" \
+  ICINGA2_FEATURE_MYSQL_PORT="3306" \
+  ICINGA2_FEATURE_MYSQL_USER="icinga" \
+  ICINGA2_FEATURE_MYSQL_PASSWORD="icinga" \
+  ICINGA2_FEATURE_MYSQL_DATABASE="icinga"
 
 # Final fixes
 RUN set -x \
     && chmod +x /*.sh \
     && sed -i 's/vars\.os.*/vars.os = "Docker"/' /etc/icinga2/conf.d/hosts.conf \
     && usermod -aG nagios www-data \
+    && icinga2 feature enable livestatus compatlog command \
+    && if [ ! -f "/etc/icinga2/pki/$(hostname).key" ]; then \
+    icinga2 node setup --master; \
+    fi \
+    && chfn -f "${ICINGA2_USER_FULLNAME}" nagios \
     && /enable-mysql.sh \
+    && /enable-graphite.sh \
     && mv /etc/icinga2/ /etc/icinga2.dist \
     && mkdir -p /var/log/icinga2 \
     && ln -sf /dev/stdout /var/log/icinga2/icinga2.log \
