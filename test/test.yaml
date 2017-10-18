@@ -7,13 +7,30 @@ services:
     ports:
       - "8081:80"
 
-  icinga:
-    image: jordan/icinga2:latest
+  mariadb:
+    image: bitnami/mariadb:latest
     environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MARIADB_USER: "icinga"
+      MARIADB_PASSWORD: "icinga"
+      MARIADB_DATABASE: "icinga"
+    volumes:
+      - "./root/db:/bitnami/mariadb"
+    healthcheck:
+      test: ["CMD", "MARIADB_PWD=icinga mysql -h 127.0.0.1 -u icinga -D icinga -e 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  icinga:
+    image: erwin82/icinga2:latest
+    environment:
+      DEBUG: "true"
       ICINGA2_FEATURE_GRAPHITE: "true"
       ICINGA2_FEATURE_GRAPHITE_HOST: "graphite"
       ICINGA2_FEATURE_GRAPHITE_PORT: "2003"
     links:
       - "graphite:graphite"
-    ports:
-      - "8080:80"
+      - "mariadb:mysql"
+    volumes:
+      - "./root/icinga2:/etc/icinga2"

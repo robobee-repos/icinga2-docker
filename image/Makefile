@@ -1,6 +1,6 @@
 REPOSITORY := erwin82
-NAME := redis-unpriv
-VERSION ?= 3.2-r1-1
+NAME := icinga2
+VERSION ?= r1-1
 
 build: _build ##@targets Builds the docker image.
 
