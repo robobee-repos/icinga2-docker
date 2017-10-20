@@ -7,7 +7,7 @@ services:
     ports:
       - "8081:80"
 
-  mariadb:
+  icingadb:
     image: bitnami/mariadb:latest
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
@@ -15,15 +15,32 @@ services:
       MARIADB_PASSWORD: "icinga"
       MARIADB_DATABASE: "icinga"
     volumes:
-      - "./root/db:/bitnami/mariadb"
+      - "./root/icingadb:/bitnami/mariadb"
     healthcheck:
       test: ["CMD", "MARIADB_PWD=icinga mysql -h 127.0.0.1 -u icinga -D icinga -e 'SELECT 1'"]
       interval: 30s
       timeout: 10s
       retries: 3
 
+  icingawebdb:
+    image: bitnami/mariadb:latest
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MARIADB_USER: "icingaweb"
+      MARIADB_PASSWORD: "icingaweb"
+      MARIADB_DATABASE: "icingaweb"
+    volumes:
+      - "./root/icingawebdb:/bitnami/mariadb"
+    healthcheck:
+      test: ["CMD", "MARIADB_PWD=icingaweb mysql -h 127.0.0.1 -u icingaweb -D icingaweb -e 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   icinga:
     image: erwin82/icinga2:latest
+    domainname: afa85c8cad58
+    hostname: afa85c8cad58
     environment:
       DEBUG: "true"
       ICINGA2_FEATURE_GRAPHITE: "true"
@@ -31,6 +48,35 @@ services:
       ICINGA2_FEATURE_GRAPHITE_PORT: "2003"
     links:
       - "graphite:graphite"
-      - "mariadb:mysql"
+      - "icingadb:mysql"
     volumes:
       - "./root/icinga2:/etc/icinga2"
+
+  icingaweb:
+    image: erwin82/icinga2web:latest
+    environment:
+      DEBUG: "true"
+      ICINGA2_FEATURE_GRAPHITE: "true"
+      ICINGA2_FEATURE_GRAPHITE_HOST: "graphite"
+      ICINGA2_FEATURE_GRAPHITE_PORT: "2003"
+      ICINGAWEB2_FEATURE_DIRECTOR_ENDPOINT: "afa85c8cad58"
+      ICINGA2_FEATURE_GRAPHITE_URL: "http://graphite:8080"
+    links:
+      - "icinga:icinga"
+      - "icinga:afa85c8cad58"
+      - "graphite:graphite"
+      - "icingadb:icingadb"
+      - "icingawebdb:icingawebdb"
+    volumes:
+      - "./root/icingaweb2:/etc/icingaweb2"
+      - "./root/html:/usr/share/icingaweb2"
+
+  nginx:
+    image: erwin82/nginx:latest
+    ports:
+      - 8080:8080
+    links:
+      - "icingaweb:icingaweb"
+    volumes:
+      - "./nginx-in:/nginx-in"
+      - "./root/html:/usr/share/icingaweb2"
