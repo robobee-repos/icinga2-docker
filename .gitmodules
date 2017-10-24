@@ -1,0 +1,3 @@
+[submodule "ca_make"]
+	path = ca_make
+	url = git@github.com:devent/ca_make.git

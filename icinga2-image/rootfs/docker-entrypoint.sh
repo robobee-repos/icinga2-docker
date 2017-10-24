@@ -6,7 +6,7 @@ if [[ "$DEBUG" == "true" ]]; then
 fi
 
 function check_files_exists() {
-  ls "$1" 1> /dev/null 2>&1
+  ls $1 1> /dev/null 2>&1
 }
 
 function copy_conf() {
@@ -19,7 +19,7 @@ function copy_conf() {
   if ! check_files_exists "*.conf"; then
     return
   fi
-  rsync -v "${dir}/*.conf" ${dest}/
+  rsync -vL ${dir}/*.conf ${dest}/
 }
 
 function copy_pki() {
@@ -31,7 +31,7 @@ function copy_pki() {
   if ! check_files_exists "*.crt"; then
     return
   fi
-  rsync -v "${dir}/*.crt" /etc/icinga2/pki/
+  rsync -vL ${dir}/*.crt /etc/icinga2/pki/
 }
 
 function sync_icinga() {

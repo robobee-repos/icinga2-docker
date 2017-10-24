@@ -51,6 +51,8 @@ services:
       - "icingadb:mysql"
     volumes:
       - "./root/icinga2:/etc/icinga2"
+      - "./icinga2-in:/icinga2-in"
+      - "./pki-in:/pki-in"
 
   icingaweb:
     image: erwin82/icinga2web:latest
