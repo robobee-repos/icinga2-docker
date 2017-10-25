@@ -17,7 +17,7 @@ services:
     volumes:
       - "./root/icingadb:/bitnami/mariadb"
     healthcheck:
-      test: ["CMD", "MARIADB_PWD=icinga mysql -h 127.0.0.1 -u icinga -D icinga -e 'SELECT 1'"]
+      test: ["CMD", "MYSQL_PWD=icinga mysql -h 127.0.0.1 -u icinga -D icinga -e 'SELECT 1'"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -32,7 +32,7 @@ services:
     volumes:
       - "./root/icingawebdb:/bitnami/mariadb"
     healthcheck:
-      test: ["CMD", "MARIADB_PWD=icingaweb mysql -h 127.0.0.1 -u icingaweb -D icingaweb -e 'SELECT 1'"]
+      test: ["CMD", "MYSQL_PWD=icingaweb mysql -h 127.0.0.1 -u icingaweb -D icingaweb -e 'SELECT 1'"]
       interval: 30s
       timeout: 10s
       retries: 3

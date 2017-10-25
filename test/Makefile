@@ -8,10 +8,11 @@ test: setup ##@targets Starts docker compose.
 .PHONY: test
 
 rm:
-	docker-compose -p $(NAME) -f test.yaml rm
+	docker-compose -p $(NAME) -f test.yaml stop
 .PHONY: rm
 
 clean: rm
+	docker-compose -p $(NAME) -f test.yaml rm -f
 	sudo rm -rf root
 .PHONY: clean
 
@@ -38,3 +39,11 @@ setup:
 	sudo chmod o+rwX root/icingawebdb
 	sudo chown 33.33 -R root/html
 .PHONY: setup
+
+setup-icinga-mysql:
+	docker exec icinga2_icinga_1 /setup-mysql-tables.sh
+.PHONY: setup-icinga-mysql
+
+setup-icingaweb-mysql:
+	docker exec icinga2_icingaweb_1 /setup-mysql-tables.sh
+.PHONY: setup-icingaweb-mysql

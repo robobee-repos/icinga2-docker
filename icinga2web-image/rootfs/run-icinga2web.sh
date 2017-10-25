@@ -41,6 +41,6 @@ do_sed /etc/icingaweb2/modules/director/kickstart.ini '%ICINGAWEB2_FEATURE_DIREC
 do_sed /etc/icingaweb2/modules/director/kickstart.ini '%ICINGAWEB2_FEATURE_DIRECTOR_USER%' "${ICINGAWEB2_FEATURE_DIRECTOR_USER}"
 do_sed /etc/icingaweb2/modules/director/kickstart.ini '%ICINGAWEB2_FEATURE_DIRECTOR_PASSWORD%' "${ICINGAWEB2_FEATURE_DIRECTOR_PASSWORD}"
 
-do_sed /etc/icingaweb2/modules/graphite/config.ini '%ICINGA2_FEATURE_GRAPHITE_URL%' "${ICINGA2_FEATURE_GRAPHITE_URL}"
+do_sed /etc/icingaweb2/modules/graphite/config.ini '%ICINGAWEB2_FEATURE_GRAPHITE_URL%' "${ICINGAWEB2_FEATURE_GRAPHITE_URL}"
 
 exec /usr/sbin/php-fpm7.0

@@ -23,15 +23,17 @@ function copy_conf() {
 }
 
 function copy_pki() {
-  dir="pki-in";
+  dir="/pki-in";
   if [ ! -d ${dir} ]; then
     return
   fi
   cd "${dir}"
-  if ! check_files_exists "*.crt"; then
-    return
+  if check_files_exists "*.crt"; then
+    rsync -vL ${dir}/*.crt /etc/icinga2/pki/
   fi
-  rsync -vL ${dir}/*.crt /etc/icinga2/pki/
+  if check_files_exists "*.key"; then
+    rsync -vL ${dir}/*.key /etc/icinga2/pki/
+  fi
 }
 
 function sync_icinga() {

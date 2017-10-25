@@ -28,6 +28,13 @@ RUN set -x \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+ARG GITREF_ICINGAWEB2=04c8892f24fe31960e08f1b05b498bdfc5221e04
+ARG GITREF_DIRECTOR=6c80a20cf8b947d5cc283a343900fb75108fb7af
+ARG GITREF_MODGRAPHITE=1f0fb9d760bea66ad1b7d70ca33fb50a55e49f05
+ARG GITREF_MODAWS=5d8830dc736712a3e929da57df1de2b5e9156195
+
+ADD rootfs/ /
+
 RUN set -x \
     && wget --quiet -O - https://packages.icinga.org/icinga.key | apt-key add - \
     && echo "deb http://packages.icinga.org/debian icinga-$(lsb_release -cs) main" > /etc/apt/sources.list.d/icinga2.list \
@@ -37,20 +44,14 @@ RUN set -x \
         icingacli \
         icingaweb2 \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-ADD rootfs/ /
-
-ARG GITREF_ICINGAWEB2=master
-ARG GITREF_DIRECTOR=master
-ARG GITREF_MODGRAPHITE=master
-ARG GITREF_MODAWS=master
-
-# Temporary hack to get icingaweb2 modules via git
-RUN set -x \
-    && mkdir -p /usr/local/share/icingaweb2/modules/ \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/share/icingaweb2/ \
+    && mkdir -p /usr/share/icingaweb2/ \
     && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2/archive/${GITREF_ICINGAWEB2}.tar.gz" \
-    | tar xz --strip-components=2 --directory=/usr/local/share/icingaweb2/modules -f - icingaweb2-${GITREF_ICINGAWEB2}/modules/monitoring icingaweb2-${GITREF_ICINGAWEB2}/modules/doc
+    | tar xz --strip-components=1 --directory=/usr/share/icingaweb2
+
+RUN set -x \
+&& ls -la /etc/icingaweb2/modules/graphite
 
 RUN set -x \
 # Icinga Director

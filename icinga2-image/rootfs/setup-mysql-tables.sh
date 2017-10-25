@@ -18,10 +18,15 @@ function create_tables() {
     return
   fi
   script_file=/usr/share/icinga2-ido-mysql/schema/mysql.sql
-  MYSQL_PWD="${ICINGA2_FEATURE_MYSQL_PASSWORD}" \
+  export MYSQL_PWD="${ICINGA2_FEATURE_MYSQL_PASSWORD}"
     mysql -h ${ICINGA2_FEATURE_MYSQL_HOST} \
       -u ${ICINGA2_FEATURE_MYSQL_USER} \
-      -D ${ICINGA2_FEATURE_MYSQL_DATABASE} < $script_file
+      -D ${ICINGA2_FEATURE_MYSQL_DATABASE} << EOF
+ALTER DATABASE ${ICINGA2_FEATURE_MYSQL_DATABASE} CHARACTER SET latin1 COLLATE latin1_general_ci;
+EOF
+  mysql -h ${ICINGA2_FEATURE_MYSQL_HOST} \
+    -u ${ICINGA2_FEATURE_MYSQL_USER} \
+    -D ${ICINGA2_FEATURE_MYSQL_DATABASE} < $script_file
 }
 
 if [[ "${ICINGA2_FEATURE_MYSQL}" != "true" ]]; then

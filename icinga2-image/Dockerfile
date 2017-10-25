@@ -45,11 +45,12 @@ ADD rootfs/setup-mysql-tables.sh /setup-mysql-tables.sh
 
 ENV DEBUG="false" \
   #
+  ICINGA2_USER_FULLNAME="Icinga2" \
+  #
   ICINGA2_FEATURE_GRAPHITE=true \
   ICINGA2_FEATURE_GRAPHITE_HOST=graphite \
   ICINGA2_FEATURE_GRAPHITE_PORT=2003 \
-  ICINGA2_FEATURE_GRAPHITE_URL=http://graphite \
-  ICINGA2_USER_FULLNAME="Icinga2" \
+  #
   ICINGA2_FEATURE_DIRECTOR="true" \
   ICINGA2_FEATURE_DIRECTOR_KICKSTART="true" \
   ICINGA2_FEATURE_DIRECTOR_USER="director" \
