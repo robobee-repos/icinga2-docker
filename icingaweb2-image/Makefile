@@ -1,6 +1,6 @@
 REPOSITORY := erwin82
-NAME := icinga2web
-VERSION ?= r1-1
+NAME := icingaweb2
+VERSION ?= v2.4.2-r1-1
 
 build: _build ##@targets Builds the docker image.
 

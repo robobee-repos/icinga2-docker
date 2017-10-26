@@ -55,7 +55,7 @@ services:
       - "./pki-in:/pki-in"
 
   icingaweb:
-    image: erwin82/icinga2web:latest
+    image: erwin82/icingaweb2:latest
     environment:
       DEBUG: "true"
       ICINGA2_FEATURE_GRAPHITE: "true"
