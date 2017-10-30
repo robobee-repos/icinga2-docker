@@ -14,6 +14,7 @@ rm:
 clean: rm
 	docker-compose -p $(NAME) -f test.yaml rm -f
 	sudo rm -rf root
+	rm -rf log.txt
 .PHONY: clean
 
 rm-icinga:
