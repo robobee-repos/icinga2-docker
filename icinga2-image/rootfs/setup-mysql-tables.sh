@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-if [[ "$DEBUG" == "true" ]]; then
-  set -x
-fi
-
 function create_tables() {
   set +e
   MYSQL_PWD="${ICINGA2_FEATURE_MYSQL_PASSWORD}" \
@@ -33,4 +29,6 @@ if [[ "${ICINGA2_FEATURE_MYSQL}" != "true" ]]; then
   exit
 fi
 
+source /docker-entrypoint-utils.sh
+set_debug
 create_tables

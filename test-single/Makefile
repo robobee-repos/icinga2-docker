@@ -1,7 +1,7 @@
 include ../utils/Makefile.help
 include ../utils/Makefile.functions
 
-NAME := icinga2
+export NAME := icinga2
 
 test: setup ##@targets Starts docker compose.
 	docker-compose -p $(NAME) -f test.yaml up

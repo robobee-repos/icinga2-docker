@@ -18,6 +18,7 @@ RUN set -x \
         wget \
         rsync \
         mysql-client \
+        supervisor \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -37,11 +38,7 @@ RUN set -x \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ADD rootfs/docker-entrypoint.sh /docker-entrypoint.sh
-ADD rootfs/run-icinga2.sh /run-icinga2.sh
-ADD rootfs/enable-mysql.sh /enable-mysql.sh
-ADD rootfs/enable-graphite.sh /enable-graphite.sh
-ADD rootfs/setup-mysql-tables.sh /setup-mysql-tables.sh
+ADD rootfs/ /
 
 ENV DEBUG="false" \
   #
@@ -81,7 +78,13 @@ RUN set -x \
     && ln -sf /dev/stdout /var/log/icinga2/startup.log \
     && ln -sf /dev/stderr /var/log/icinga2/error.log \
     && mkdir -p /run/icinga2 \
-    && chmod o+rwX /run/icinga2
+    && chmod o+rwX /run/icinga2 \
+    && mkdir -p /var/run/supervisor \
+    && chown nagios.nagios /var/run/supervisor \
+    && chmod o+rwX /var/run/supervisor \
+    && mkdir -p /var/log/supervisor \
+    && chown nagios.nagios /var/log/supervisor \
+    && chmod o+rwX /var/log/supervisor
 
 EXPOSE 5665
 
@@ -89,6 +92,6 @@ VOLUME /etc/icinga2
 
 USER nagios
 
-CMD ["/run-icinga2.sh"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

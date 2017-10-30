@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-if [[ "$DEBUG" == "true" ]]; then
-  set -x
-fi
-
 function create_icingaweb() {
   script_file=/usr/share/icingaweb2/etc/schema/mysql.schema.sql
   ICINGAWEB2_ADMIN_PASS_HASH=$(openssl passwd -1 "${ICINGAWEB2_ADMIN_PASSWORD}")
@@ -49,6 +45,9 @@ function create_director() {
       -D ${ICINGAWEB2_FEATURE_DIRECTOR_MYSQL_DATABASE} < $script_file
   fi
 }
+
+source /docker-entrypoint-utils.sh
+set_debug
 
 if [[ "${ICINGAWEB2_FEATURE_MYSQL}" == "true" ]]; then
   create_icingaweb

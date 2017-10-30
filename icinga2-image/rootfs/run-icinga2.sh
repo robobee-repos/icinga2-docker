@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-if [[ "$DEBUG" == "true" ]]; then
-  set -x
-fi
-
 function setup_director_user() {
   if [[ "${ICINGA2_FEATURE_DIRECTOR}" != "true" ]]; then
     return
@@ -16,6 +12,10 @@ object ApiUser "${ICINGA2_FEATURE_DIRECTOR_USER}" {
 }
 EOF
 }
+
+source /docker-entrypoint-utils.sh
+
+set_debug
 
 setup_director_user
 

@@ -1,54 +1,16 @@
 #!/bin/bash
 set -e
 
-if [[ "$DEBUG" == "true" ]]; then
-  set -x
-fi
-
-function check_files_exists() {
-  ls $1 1> /dev/null 2>&1
-}
-
-function copy_conf() {
-  dir="$1"; shift
-  dest="$1"; shift
-  if [ ! -d ${dir} ]; then
-    return
-  fi
-  cd "${dir}"
-  if ! check_files_exists "*.conf"; then
-    return
-  fi
-  rsync -vL ${dir}/*.conf ${dest}/
-}
-
-function copy_pki() {
-  dir="/pki-in";
-  if [ ! -d ${dir} ]; then
-    return
-  fi
-  cd "${dir}"
-  if check_files_exists "*.crt"; then
-    rsync -vL ${dir}/*.crt /etc/icinga2/pki/
-  fi
-  if check_files_exists "*.key"; then
-    rsync -vL ${dir}/*.key /etc/icinga2/pki/
-  fi
-}
-
-function sync_icinga() {
-  cd /etc/icinga2
-  rsync -rlD -u /etc/icinga2.dist/. .
-}
- 
+source /docker-entrypoint-utils.sh
+set_debug
 echo "Running as `id`"
-
-sync_icinga
-copy_conf /icinga2-in /etc/icinga2
-copy_conf /conf-in /etc/icinga2/conf.d
-copy_conf /features-in /etc/icinga2/features-available
-copy_conf /repository-in /etc/icinga2/repository.d
-copy_conf /zones-in /etc/icinga2/zones.d
-copy_pki
+sync_dir "/etc/icinga2.dist" "/etc/icinga2"
+copy_files "/icinga2-in" "/etc/icinga2" "*.conf"
+copy_files "/conf-in" "/etc/icinga2/conf.d" "*.conf"
+copy_files "/features-in" "/etc/icinga2/features-available" "*.conf"
+copy_files "/repository-in" "/etc/icinga2/repository.d" "*.conf"
+copy_files "/zones-in" "/etc/icinga2/zones.d" "*.conf"
+copy_files "/pki-in" "/etc/icinga2/pki" "*.crt"
+copy_files "/pki-in" "/etc/icinga2/pki" "*.key"
 
 exec "$@"
