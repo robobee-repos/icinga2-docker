@@ -41,6 +41,10 @@ services:
     image: erwin82/icinga2:latest
     domainname: afa85c8cad58
     hostname: afa85c8cad58
+    networks:
+      main:
+        aliases:
+          - afa85c8cad58
     environment:
       DEBUG: "true"
       ICINGA2_FEATURE_GRAPHITE: "true"
@@ -58,6 +62,10 @@ services:
     image: erwin82/icinga2:latest
     domainname: 85cfff74bf92
     hostname: 85cfff74bf92
+    networks:
+      main:
+        aliases:
+          - 85cfff74bf92
     environment:
       DEBUG: "true"
       ICINGA2_FEATURE_GRAPHITE: "true"
